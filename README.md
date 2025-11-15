@@ -1,1 +1,1 @@
-# Cokie Project
+# Cokie Dorm web/application Project
