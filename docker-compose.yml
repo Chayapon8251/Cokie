@@ -1,0 +1,58 @@
+services:
+  
+  backend:
+    build:
+      context: ./backend/backend
+      dockerfile: Dockerfile
+    container_name: dorm_backend
+    ports:
+      # ใช้ $API_PORT จาก .env (ถ้าไม่มีให้ใช้ 3001)
+      - "${API_PORT:-3001}:3000" 
+    networks:
+      - dorm-network
+    depends_on:
+      - db
+    environment:
+      # ส่งค่าจาก .env เข้าไปใน container
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - JWT_SECRET=${JWT_SECRET}
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: dorm_frontend
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    networks:
+      - dorm-network
+    depends_on:
+      - backend
+    environment:
+      # Backend API URL จะเปลี่ยนไปตาม $API_PORT ที่เราตั้งไว้
+      - NEXT_PUBLIC_API_URL=http://localhost:${API_PORT:-3001}
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    container_name: dorm_db
+    environment:
+      # ดึงค่าจาก .env มาตั้งค่า PostgreSQL
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - dorm-network
+    restart: unless-stopped
+
+networks:
+  dorm-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

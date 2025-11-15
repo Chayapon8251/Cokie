@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // ดึงค่าจาก .env
+}
+
+// ----------------------------------------------
+// 1. ระบบ User และ Profile
+// ----------------------------------------------
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique // ใช้ Email สมัครเป็นหลัก
+  name      String?
+  password  String?  // Password เป็น Optional (สำหรับ login แบบปกติ)
+  role      UserRole @default(TENANT) // แบ่งบทบาท เจ้าของ / ผู้เช่า
+  createdAt DateTime @default(now())
+
+  // ความสัมพันธ์
+  room      Room?    @relation(fields: [roomId], references: [id]) // ผู้เช่า 1 คน อยู่ 1 ห้อง
+  roomId    String?  @unique
+  
+  payments        Payment[]       // ผู้เช่า 1 คน มีหลาย Payment
+  supportTickets  SupportTicket[] // ผู้เช่า 1 คน แจ้งปัญหาได้หลายครั้ง
+}
+
+enum UserRole {
+  TENANT // ผู้เช่า
+  OWNER  // เจ้าของหอ
+}
+
+// ----------------------------------------------
+// 2. ระบบห้องพัก (และ รหัส WiFi)
+// ----------------------------------------------
+
+model Room {
+  id           String  @id @default(cuid())
+  roomNumber   String  @unique // เช่น "101", "205"
+  wifiPassword String  // **เก็บรหัส WiFi ไว้ที่นี่**
+  price        Float   // ราคาค่าเช่า
+
+  // ความสัมพันธ์
+  user User? // ห้อง 1 ห้อง มีผู้เช่า 1 คน
+}
+
+// ----------------------------------------------
+// 3. ระบบจ่ายเงิน (และ Log)
+// ----------------------------------------------
+
+model Payment {
+  id        String       @id @default(cuid())
+  amount    Float        // จำนวนเงินที่จ่าย
+  month     Int          // จ่ายของเดือนไหน (เช่น 1, 2, 3...12)
+  year      Int          // จ่ายของปีไหน
+  status    PaymentStatus @default(PENDING)
+  createdAt DateTime     @default(now())
+
+  // ความสัมพันธ์
+  user    User   @relation(fields: [userId], references: [id]) // ใครเป็นคนจ่าย
+  userId  String
+}
+
+enum PaymentStatus {
+  PENDING   // รอดำเนินการ
+  COMPLETED // จ่ายแล้ว
+  FAILED    // ล้มเหลว
+}
+
+// ----------------------------------------------
+// 4. ระบบประกาศ (Announcements)
+// ----------------------------------------------
+
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  // สร้างโดย Owner แต่แสดงให้ทุกคน
+}
+
+// ----------------------------------------------
+// 5. ระบบแจ้งปัญหา (Support)
+// ----------------------------------------------
+
+model SupportTicket {
+  id        String     @id @default(cuid())
+  title     String     // หัวข้อปัญหา เช่น "แอร์ไม่เย็น"
+  details   String     // รายละเอียด
+  status    TicketStatus @default(OPEN)
+  createdAt DateTime   @default(now())
+
+  // ความสัมพันธ์
+  user    User   @relation(fields: [userId], references: [id]) // ใครเป็นคนแจ้ง
+  userId  String
+}
+
+enum TicketStatus {
+  OPEN      // ปัญหาเปิดอยู่
+  IN_PROGRESS // กำลังดำเนินการ
+  RESOLVED  // แก้ไขแล้ว
+}
