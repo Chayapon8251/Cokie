@@ -28,7 +28,7 @@ WORKDIR /usr/src/app
 
 # Copy package files
 COPY package*.json ./
-
+RUN npm install -g @nestjs/cli
 # Copy Prisma schema
 COPY src/prisma ./src/prisma
 

@@ -50,17 +50,26 @@ export class AuthService {
       const { password, ...userWithoutPassword } = user;
       return userWithoutPassword;
     } catch (error) {
+      // 1. ถ้า error นี้เป็น HTTP Exception อยู่แล้ว (เช่น ConflictException ที่เราเพิ่งโยนไป)
+      // ให้ "โยนต่อ" (re-throw) ไปเลย ไม่ต้องไปทำอะไรเพิ่ม
+      if (error instanceof ConflictException) {
+        throw error;
+      }
+
+      // 2. ถ้าเป็น Prisma Error P2002 (อีเมลซ้ำ)
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2002'
       ) {
-        this.logger.warn(`Email already exists: ${dto.email}`, error.message);
+        this.logger.warn(`Email already exists: ${dto.email}`);
         throw new ConflictException('Email already in use');
       }
+
+      // 3. ถ้าเป็น Error อื่นๆ ที่เราไม่รู้จัก ค่อยตีว่าเป็น 500
       this.logger.error(`Failed to register user: ${dto.email}`, error.stack);
       throw new InternalServerErrorException('Could not complete registration');
     }
-  }
+  } // <-- ปิดฟังก์ชัน register ตรงนี้
 
   // --- 5. เพิ่มฟังก์ชัน Login (ที่ขาดไป) ---
   async login(dto: LoginUserDto) {
