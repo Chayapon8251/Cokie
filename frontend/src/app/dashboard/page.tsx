@@ -70,7 +70,7 @@ export default function DashboardPage() {
       <main className="max-w-5xl mx-auto px-6 py-10">
         
         {/* การ์ดต้อนรับ */}
-        <div className="bg-cookie-brown text-white p-8 rounded-2xl shadow-lg mb-10 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="bg-white border border-cookie-latte text-cookie-brown p-8 rounded-2xl shadow-lg mb-10 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div>
             <h2 className="text-3xl font-bold mb-2">
               {user.role === "OWNER" ? "Welcome Back, Boss! 💼" : "Welcome Home! 🏡"}
