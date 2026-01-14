@@ -98,7 +98,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-brown-600 hover:bg-brown-700 text-white font-semibold py-2.5 rounded-lg transition duration-200 disabled:bg-brown-300"
+            className="w-full mt-4 bg-[#8B5E3C] hover:bg-[#6d4a30] text-white font-bold py-3 rounded-xl shadow-md hover:shadow-lg transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? "กำลังตรวจสอบ..." : "เข้าสู่ระบบ"}
           </button>
