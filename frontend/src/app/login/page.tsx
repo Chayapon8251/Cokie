@@ -72,7 +72,7 @@ export default function LoginPage() {
             <input
               type="email"
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+              className="w-full px-4 py-2 border text-gray-900 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
               placeholder="yourname@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -87,7 +87,7 @@ export default function LoginPage() {
             <input
               type="password"
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+              className="w-full px-4 py-2 border text-gray-900 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -98,7 +98,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition duration-200 disabled:bg-blue-300"
+            className="w-full bg-brown-600 hover:bg-brown-700 text-white font-semibold py-2.5 rounded-lg transition duration-200 disabled:bg-brown-300"
           >
             {isLoading ? "กำลังตรวจสอบ..." : "เข้าสู่ระบบ"}
           </button>
@@ -108,7 +108,7 @@ export default function LoginPage() {
         {/* ลิงก์ไปหน้าสมัครสมาชิก (เผื่อไว้) */}
         <div className="mt-6 text-center text-sm text-gray-600">
           ยังไม่มีบัญชี?{" "}
-          <a href="/register" className="text-blue-600 hover:underline font-medium">
+          <a href="/register" className="text-brown-600 hover:underline font-medium">
             สมัครสมาชิก
           </a>
         </div>

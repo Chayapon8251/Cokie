@@ -75,7 +75,7 @@ export default function RegisterPage() {
             <input
               type="text"
               required
-              className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-cookie-brown focus:border-transparent outline-none transition"
+              className="w-full px-4 text-gray-900 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-cookie-brown focus:border-transparent outline-none transition"
               placeholder="สมชาย ใจดี"
               value={name}
               onChange={(e) => setName(e.target.value)}
