@@ -112,6 +112,13 @@ export default function LoginPage() {
             สมัครสมาชิก
           </a>
         </div>
+        <a
+          href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`} // ลิงก์ไป Backend
+          className="w-full flex items-center justify-center gap-2 mt-4 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-2.5 rounded-xl transition shadow-sm"
+        >
+          {/* (หา Icon Google SVG มาใส่ตรงนี้จะสวยมาก) */}
+           เข้าสู่ระบบด้วย Google
+        </a>
 
       </div>
     </div>

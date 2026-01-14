@@ -111,4 +111,36 @@ export class AuthService {
       accessToken: accessToken,
     };
   }
+  async googleLogin(req) {
+    if (!req.user) {
+      return 'No user from google';
+    }
+
+    // 1. เช็คว่ามี user นี้ใน DB หรือยัง
+    let user = await this.prisma.user.findUnique({
+      where: { email: req.user.email },
+    });
+
+    // 2. ถ้าไม่มี -> สร้างใหม่เลย (Auto Register)
+    if (!user) {
+      user = await this.prisma.user.create({
+        data: {
+          email: req.user.email,
+          name: req.user.name,
+          password: '', // ไม่ต้องมีรหัสผ่าน เพราะเข้าผ่าน Google
+          role: 'TENANT', // ให้เป็นผู้เช่าไปก่อน
+        },
+      });
+    }
+
+    // 3. สร้าง Token ส่งกลับไป
+    return {
+      accessToken: this.jwtService.sign({
+        email: user.email,
+        sub: user.id,
+        role: user.role,
+      }),
+      user: user,
+    };
+  }
 }

@@ -6,7 +6,9 @@ import {
   HttpStatus,
   UseGuards, // <--- เพิ่ม
   Get,       // <--- เพิ่ม
-  Request,   // <--- เพิ่ม
+  Request,
+  Req,
+  Res,   // <--- เพิ่ม
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
@@ -16,6 +18,28 @@ import { LoginUserDto } from './dto/login-user.dto';
 @Controller('auth') // URL: /auth
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req) {}
+
+  // 2. ลิงก์ที่ Google จะส่ง User กลับมาหาเรา
+  @Get('google/redirect')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(@Req() req, @Res() res) {
+    const data = await this.authService.googleLogin(req);
+  
+  // --- แก้ไขตรงนี้ ---
+  // เราใช้ (data as any) เพื่อบอก TypeScript ว่า "เชื่อฉันเถอะ มันมี accessToken"
+  // หรือถ้าจะเขียนให้ดีกว่านี้ต้องเช็ค if (typeof data === 'string') ก่อน
+  
+    if ((data as any).accessToken) {
+        res.redirect(`http://localhost:3000/login?token=${(data as any).accessToken}`);
+    } else {
+        res.redirect(`http://localhost:3000/login?error=GoogleLoginFailed`);
+    }
+  }
+  // ----------------
 
   @Post('register') // URL: POST /auth/register
   register(@Body() dto: RegisterUserDto) {

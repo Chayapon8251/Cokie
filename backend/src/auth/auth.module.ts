@@ -4,6 +4,7 @@ import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt'; // <--- 1. Import
 import { PassportModule } from '@nestjs/passport'; // <--- 1. Import
 import { JwtStrategy } from './jwt.strategy';
+import { GoogleStrategy } from './google.strategy';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { JwtStrategy } from './jwt.strategy';
   controllers: [AuthController],
   providers: [
     AuthService,
-    JwtStrategy, // <--- 4. เพิ่ม "กฎของยาม" เป็น Provider
+    JwtStrategy,
+    GoogleStrategy, // <--- 4. เพิ่ม "กฎของกูเกิล" เป็น Provider
   ],
 })
 export class AuthModule {}
