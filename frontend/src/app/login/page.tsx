@@ -1,12 +1,30 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authService } from "@/services/auth.service";
 
 export default function LoginPage() {
   const router = useRouter();
-  
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const token = searchParams.get("token"); // อ่านค่า ?token=... จาก URL
+    const error = searchParams.get("error");
+
+    if (token) {
+      // 1. เก็บ Token
+      localStorage.setItem("token", token);
+      // 2. แจ้งเตือน (หรือจะเงียบๆ ก็ได้)
+      alert("Google Login สำเร็จ! 🍪");
+      // 3. ดีดไปหน้า Dashboard
+      router.push("/dashboard");
+    } 
+    
+    if (error) {
+      alert("เกิดข้อผิดพลาดในการ Login ผ่าน Google");
+    }
+  }, [searchParams, router]);
   // State สำหรับเก็บค่าจากฟอร์ม
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

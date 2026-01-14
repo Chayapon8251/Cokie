@@ -29,14 +29,23 @@ export class AuthController {
   async googleAuthRedirect(@Req() req, @Res() res) {
     const data = await this.authService.googleLogin(req);
   
-  // --- แก้ไขตรงนี้ ---
-  // เราใช้ (data as any) เพื่อบอก TypeScript ว่า "เชื่อฉันเถอะ มันมี accessToken"
-  // หรือถ้าจะเขียนให้ดีกว่านี้ต้องเช็ค if (typeof data === 'string') ก่อน
+  // เช็ค Data
+    const user = (data as any).user; 
+    const token = (data as any).accessToken;
+
+  // ⚠️ จุดสังเกต:
+  // 1. ต้อง redirect ไป Frontend (localhost:3000)
+  // 2. ต้องไปหน้า /login
+  // 3. ต้องส่ง ?token=... (ชื่อ query param ต้องตรงกับที่ Frontend รอรับ)
   
-    if ((data as any).accessToken) {
-        res.redirect(`http://localhost:3000/login?token=${(data as any).accessToken}`);
+    if (token) {
+      // สำหรับ Local
+        res.redirect(`http://localhost:3000/login?token=${token}`);
+      
+      // 💡 ทริค: ถ้าจะให้รองรับ Render ด้วย ต้องแก้ตรงนี้ให้เป็น Dynamic
+      // แต่ตอนนี้เอา Local ให้รอดก่อน ใช้ Hardcode ไปเลยครับ
     } else {
-        res.redirect(`http://localhost:3000/login?error=GoogleLoginFailed`);
+        res.redirect(`http://localhost:3000/login?error=true`);
     }
   }
   // ----------------
